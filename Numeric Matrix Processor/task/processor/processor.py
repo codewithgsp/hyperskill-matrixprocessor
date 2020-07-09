@@ -15,19 +15,26 @@ class NumericMatrixProcessor:
         return result_matrix
 
 
-matrix_object_dict = {}
-for k in range(1, 3):
-    u_row, u_column = list(map(int, input().split(' ')))
-    u_matrix = []
-    for _ in range(u_row):
-        u_row_matrix = list(map(int, input().split(' ')))
-        u_matrix.append(u_row_matrix)
-    matrix_object_dict[f'matrix_{k}'] = NumericMatrixProcessor(u_row, u_column, u_matrix)
+class InputUserMatrix:
 
-if (matrix_object_dict['matrix_1'].row == matrix_object_dict['matrix_2'].row
-        and matrix_object_dict['matrix_1'].column == matrix_object_dict['matrix_2'].column):
-    result = matrix_object_dict['matrix_1'].add_matrix(matrix_object_dict['matrix_2'].matrix)
-    for i in range(matrix_object_dict['matrix_1'].row):
-        print(" ".join(result[i]))
-else:
-    print('ERROR')
+    def run(self):
+        matrix_object_dict = {}
+        for k in range(1, 3):
+            u_row, u_column = list(map(int, input().split(' ')))
+            u_matrix = []
+            for _ in range(u_row):
+                u_row_matrix = list(map(int, input().split(' ')))
+                u_matrix.append(u_row_matrix)
+            matrix_object_dict[f'matrix_{k}'] = NumericMatrixProcessor(u_row, u_column, u_matrix)
+
+        if (matrix_object_dict['matrix_1'].row == matrix_object_dict['matrix_2'].row
+                and matrix_object_dict['matrix_1'].column == matrix_object_dict['matrix_2'].column):
+            result = matrix_object_dict['matrix_1'].add_matrix(matrix_object_dict['matrix_2'].matrix)
+            for i in range(matrix_object_dict['matrix_1'].row):
+                print(" ".join(result[i]))
+        else:
+            print('ERROR')
+
+
+ium = InputUserMatrix()
+ium.run()
