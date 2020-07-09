@@ -14,10 +14,19 @@ class NumericMatrixProcessor:
             result_matrix.append(row_matrix)
         return result_matrix
 
+    def multiply_matrix(self, number):
+        result_matrix = []
+        for row in range(0, self.row):
+            row_matrix = []
+            for column in range(0, self.column):
+                row_matrix.append(str(self.matrix[row][column] * number))
+            result_matrix.append(row_matrix)
+        return result_matrix
+
 
 class InputUserMatrix:
 
-    def run(self):
+    def run_add_matrix(self):
         matrix_object_dict = {}
         for k in range(1, 3):
             u_row, u_column = list(map(int, input().split(' ')))
@@ -31,10 +40,21 @@ class InputUserMatrix:
                 and matrix_object_dict['matrix_1'].column == matrix_object_dict['matrix_2'].column):
             result = matrix_object_dict['matrix_1'].add_matrix(matrix_object_dict['matrix_2'].matrix)
             for i in range(matrix_object_dict['matrix_1'].row):
-                print(" ".join(result[i]))
+                print(' '.join(result[i]))
         else:
             print('ERROR')
 
+    def run_multiply_matrix(self):
+        u_row, u_column = list(map(int, input().split(' ')))
+        u_matrix = []
+        for _ in range(u_row):
+            u_row_matrix = list(map(int, input().split(' ')))
+            u_matrix.append(u_row_matrix)
+        matrix_1 = NumericMatrixProcessor(u_row, u_column, u_matrix)
+        result = matrix_1.multiply_matrix(int(input()))
+        for i in range(matrix_1.row):
+            print(' '.join(result[i]))
+
 
 ium = InputUserMatrix()
-ium.run()
+ium.run_multiply_matrix()
