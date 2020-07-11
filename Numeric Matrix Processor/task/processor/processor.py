@@ -48,14 +48,51 @@ class Matrix:
     def __check_dimension_mul(self, matrix):
         return True if len(self.matrix[0]) == len(matrix) else False
 
+    def transpose(self, option):
+        transposed_matrix = [['*' for _ in range(self.__r)] for _ in range(self.__c)]
+        if option == '1':
+            for i in range(self.__r):
+                for j in range(self.__c):
+                    if transposed_matrix[j][i] == '*':
+                        transposed_matrix[j][i] = self.matrix[i][j]
+            return Matrix(matrix=transposed_matrix)
+        if option == '2':
+            column = self.__c
+            for i in range(self.__c):
+                row = self.__r
+                column += -1
+                for j in range(self.__r):
+                    row += -1
+                    if transposed_matrix[i][j] == '*':
+                        transposed_matrix[i][j] = self.matrix[row][column]
+            return Matrix(matrix=transposed_matrix)
+        if option == '3':
+            for i in range(self.__c):
+                column = self.__c
+                for j in range(self.__r):
+                    column += -1
+                    if transposed_matrix[i][j] == '*':
+                        transposed_matrix[i][j] = self.matrix[i][column]
+            return Matrix(matrix=transposed_matrix)
+        if option == '4':
+            row = self.__r
+            for i in range(self.__c):
+                row += -1
+                for j in range(self.__r):
+                    if transposed_matrix[i][j] == '*':
+                        transposed_matrix[i][j] = self.matrix[row][j]
+            return  Matrix(matrix=transposed_matrix)
+
 
 class Processor:
-    options = ['Add matrices', 'Multiply matrix by a constant', 'Multiply matrices']
+    options = ['Add matrices', 'Multiply matrix by a constant', 'Multiply matrices', 'Transpose matrix']
+    transpose_options = ['Main diagonal', 'Side diagonal', 'Vertical line', 'Horizontal line']
 
     def play(self):
         while True:
-            self.display_options()
-            user_input = input()
+            self.display_options(self.options)
+            print('0. Exit')
+            user_input = input('Your choice:')
             if user_input == '0':
                 exit(0)
             if user_input == '1':
@@ -69,11 +106,18 @@ class Processor:
             elif user_input == '3':
                 result = Matrix(number='first') * Matrix(number='second')
                 print(f'The result is:\n{result}\n')
+            elif user_input == '4':
+                self.display_options(self.transpose_options)
+                user_requested_transpose = input('Your choice:')
+                if user_requested_transpose in ('1', '2', '3', '4'):
+                    m1 = Matrix(number='')
+                    print('option', user_requested_transpose)
+                    result = m1.transpose(user_requested_transpose)
+                    print(f'The result is:\n{result}\n')
 
-    def display_options(self):
-        for i, option in enumerate(self.options, start=1):
+    def display_options(self, options):
+        for i, option in enumerate(options, start=1):
             print(f'{i}. {option}')
-        print('0. Exit')
 
 
 processor = Processor()
