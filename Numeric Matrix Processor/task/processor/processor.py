@@ -33,7 +33,8 @@ class Matrix:
             return self.error_msg
 
     def __matrix_multiplication(self, other):
-        return Matrix(matrix=[[sum(a * b for a, b in zip(row_x, col_y)) for col_y in zip(*other.matrix)] for row_x in self.matrix])
+        return Matrix(matrix=[[sum(a * b for a, b in zip(row_x, col_y)) for col_y in zip(*other.matrix)]
+                              for row_x in self.matrix])
 
     def __create_from_input(self):
         self.__r, self.__c = map(int, input('Enter size of {} matrix:'.format(self.number)).split(' '))
@@ -56,6 +57,27 @@ class Matrix:
 
     def __check_square_matrix(self):
         return True if len(self.matrix) == len(self.matrix[0]) else False
+
+    @staticmethod
+    def get_matrix_minor(m, i, j):
+        return [row[:j] + row[j+1:] for row in (m[:i]+m[i+1:])]
+
+    @staticmethod
+    def get_cofactor_matrix(m):
+
+        #  special case for 2x2 matrix:
+        if len(m) == 2:
+            return [[m[1][1], -1 * m[0][1]], [-1 * m[1][0], m[0][0]]]
+
+        #  find matrix of co_factors
+        co_factors = []
+        for r in range(len(m)):
+            cofactor_row = []
+            for c in range(len(m)):
+                minor = Matrix.get_matrix_minor(m, r, c)
+                cofactor_row.append(((-1)**(r+c)) * Matrix.get_determinant(minor))
+            co_factors.append(cofactor_row)
+        return Matrix(matrix=co_factors)
 
     @staticmethod
     def get_determinant(matrix, total=0):
@@ -125,7 +147,8 @@ class Processor:
                'Multiply matrix by a constant',
                'Multiply matrices',
                'Transpose matrix',
-               'Calculate a determinant']
+               'Calculate a determinant',
+               'Inverse matrix']
 
     transpose_options = ['Main diagonal',
                          'Side diagonal',
@@ -162,6 +185,22 @@ class Processor:
                 m1 = Matrix(number='')
                 result = Matrix.get_determinant(m1.matrix)
                 print(f'{result}\n')
+            elif user_input == '6':
+                m1 = Matrix(number='')
+                determinant = Matrix.get_determinant(m1.matrix)
+                if determinant == 0:
+                    print("This matrix doesn't have an inverse.\n")
+                else:
+                    cofactor_matrix = Matrix.get_cofactor_matrix(m1.matrix)
+                    length = len(cofactor_matrix.matrix)
+                    transposed_matrix = [['*' for _ in range(length)] for _ in range(length)]
+                    for i in range(length):
+                        for j in range(length):
+                            if transposed_matrix[j][i] == '*':
+                                transposed_matrix[j][i] = cofactor_matrix.matrix[i][j]
+                    result = [[transposed_matrix[r][c] * (1 / determinant) for c in range(length)] for r in range(length)]
+                    for row in result:
+                        print(" ".join(str(cell) for cell in row))
 
     def display_options(self, options):
         for i, option in enumerate(options, start=1):
