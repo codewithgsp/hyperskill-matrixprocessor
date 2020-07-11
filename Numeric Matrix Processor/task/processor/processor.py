@@ -1,3 +1,6 @@
+from copy import copy
+
+
 class Matrix:
 
     error_msg = 'The operation cannot be performed.'
@@ -17,6 +20,9 @@ class Matrix:
                                    for c in range(self.__c)] for r in range(self.__r)])
         else:
             return self.error_msg
+
+    def __len__(self):
+        return len(self.matrix)
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -47,6 +53,36 @@ class Matrix:
 
     def __check_dimension_mul(self, matrix):
         return True if len(self.matrix[0]) == len(matrix) else False
+
+    def __check_square_matrix(self):
+        return True if len(self.matrix) == len(self.matrix[0]) else False
+
+    @staticmethod
+    def get_determinant(matrix, total=0):
+
+        # store indices in list for row ref
+        indices = list(range(len(matrix)))
+
+        # base ends
+        if len(matrix) == 1 and len(matrix[0]) == 1:
+            return matrix[0][0]
+
+        if len(matrix) == 2 and len(matrix[0]) == 2:
+            return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]
+
+        # focused columns
+        for fc in indices:
+            _as = copy(matrix)  # copy the matrix
+            _as = _as[1:]
+            height = len(_as)
+
+            for i in range(height):
+                _as[i] = _as[i][0:fc] + _as[i][fc+1:]
+
+            sign = (-1) ** (fc % 2)
+            sub_det = Matrix.get_determinant(_as)
+            total += sign * matrix[0][fc] * sub_det
+        return total
 
     def transpose(self, option):
         transposed_matrix = [['*' for _ in range(self.__r)] for _ in range(self.__c)]
@@ -81,12 +117,20 @@ class Matrix:
                 for j in range(self.__r):
                     if transposed_matrix[i][j] == '*':
                         transposed_matrix[i][j] = self.matrix[row][j]
-            return  Matrix(matrix=transposed_matrix)
+            return Matrix(matrix=transposed_matrix)
 
 
 class Processor:
-    options = ['Add matrices', 'Multiply matrix by a constant', 'Multiply matrices', 'Transpose matrix']
-    transpose_options = ['Main diagonal', 'Side diagonal', 'Vertical line', 'Horizontal line']
+    options = ['Add matrices',
+               'Multiply matrix by a constant',
+               'Multiply matrices',
+               'Transpose matrix',
+               'Calculate a determinant']
+
+    transpose_options = ['Main diagonal',
+                         'Side diagonal',
+                         'Vertical line',
+                         'Horizontal line']
 
     def play(self):
         while True:
@@ -114,6 +158,10 @@ class Processor:
                     print('option', user_requested_transpose)
                     result = m1.transpose(user_requested_transpose)
                     print(f'The result is:\n{result}\n')
+            elif user_input == '5':
+                m1 = Matrix(number='')
+                result = Matrix.get_determinant(m1.matrix)
+                print(f'{result}\n')
 
     def display_options(self, options):
         for i, option in enumerate(options, start=1):
